@@ -48,7 +48,7 @@ function gridLines(lines, cols, opt){
     for(let j=0;j<cols; j++){
       // get parts
       let [H, V] = getParts(i, j, lines, cols)
-      let css = objutil.assign({}, style[H+V] || style.LT)
+      let css = objutil.assign({}, style[H+V] || style[j+','+i] || style.LT)
 
       // get regions
       if(isArray(regions)){
@@ -63,13 +63,16 @@ function gridLines(lines, cols, opt){
           let rw = x+w
           if(i>=y && i<rh && j>=x && j<rw) {
             let [H2, V2] = getParts(i,j,rh, rw, x, y)
-            console.log(i,j,H2,V2)
+            // console.log(i,j,H2,V2)
             // corner case, i==0, lines==1, T will B!!
             if(!keepBorder){
               if(V2!='B') css.borderBottom = 0
               if(H2!='R') css.borderRight=0
             }
-            if(style) objutil.assign(css, style[H2+V2]||style.LT)
+            if(style) objutil.assign(
+              css,
+              style[H2+V2] || style[(j-x)+','+(i-y)] || style.LT
+            )
           }
         })
       }
@@ -83,9 +86,9 @@ function gridLines(lines, cols, opt){
     }
     ret.push('</tr>')
   }
-  return ret.join(opt.newLine)
+  return '<table cellpadding=0 cellspacing=0>' + ret.join(opt.newLine) + '</table>'
 }
 
-require('fs').writeFileSync('test.html', `<table cellpadding=0 cellspacing=0>${gridLines(8,9, {regions:[[1,4,1,2],{x:1,y:2,w:1,h:2,keepBorder:true,style:{LT:{background:'red'},RB1:{borderBottom:'3px solid black'}}},[3,4,2,2]], style:{LT:{border:'1px solid red'}}, getValue:(i,j)=>i+j})}</table>`, 'utf8')
+require('fs').writeFileSync('test.html', gridLines(8,9, {regions:[[1,4,1,2],{x:1,y:2,w:1,h:2,keepBorder:true,style:{'0,1':{background:'green'},LT:{background:'pink'},RB1:{borderBottom:'3px solid black'}}},[3,4,2,2]], style:{'3,3':{background:'yellow'},LT:{border:'1px solid red'}}, getValue:(i,j)=>i+j}), 'utf8')
 
 
