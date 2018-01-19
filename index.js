@@ -1,5 +1,7 @@
 module.exports = gridLines
 
+const objutil = require('objutil')
+
 function dashify (str) {
   return str.replace(/[A-Z]/g, function (m) {
     return '-' + m.toLowerCase()
@@ -27,7 +29,7 @@ var defaultOptions = {
 }
 function gridLines(lines, cols, opt){
   const ret = []
-  opt = Object.assign({}, defaultOptions, opt)
+  opt = objutil.merge({}, defaultOptions, opt)
   const {style} = opt
   style.CB=style.CB||style.LB
   style.RC=style.RC||style.RT
@@ -44,6 +46,6 @@ function gridLines(lines, cols, opt){
   return ret.join(opt.newLine)
 }
 
-require('fs').writeFileSync('test.html', `<table cellpadding=0 cellspacing=0>${gridLines(5,3)}</table>`, 'utf8')
+require('fs').writeFileSync('test.html', `<table cellpadding=0 cellspacing=0>${gridLines(5,3, {style:{LT:{border:'1px solid red'}}})}</table>`, 'utf8')
 
 

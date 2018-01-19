@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/futurist/grid-lines/issues"
   },
-  "homepage": "https://github.com/futurist/grid-lines#readme"
+  "homepage": "https://github.com/futurist/grid-lines#readme",
+  "dependencies": {
+    "objutil": "^2.16.1"
+  }
 }
