@@ -35,15 +35,22 @@ function getParts(i, j, lines, cols, x, y){
 }
 function gridLines(lines, cols, opt){
   const ret = []
+
+  // default opt
   opt = objutil.merge({}, defaultOptions, opt)
-  const {style, regions} = opt
+  const {style, regions, getValue} = opt
   style.CB=style.CB||style.LB
   style.RC=style.RC||style.RT
+
+  // main loop
   for(let i=0;i<lines; i++){
     ret.push('<tr>')
     for(let j=0;j<cols; j++){
+      // get parts
       let [H, V] = getParts(i, j, lines, cols)
       let css = objutil.assign({}, style[H+V] || style.LT)
+
+      // get regions
       if(isArray(regions)){
         regions.forEach(obj=>{
           if(!obj) return
@@ -64,13 +71,19 @@ function gridLines(lines, cols, opt){
           }
         })
       }
-      ret.push('<td style="'+inlineStyle(css)+'">', i*cols+j, '</td>')
+
+      // push cells
+      ret.push(
+        '<td style="'+inlineStyle(css)+'">',
+        getValue ? getValue(i,j) : i*cols+j,
+        '</td>'
+      )
     }
     ret.push('</tr>')
   }
   return ret.join(opt.newLine)
 }
 
-require('fs').writeFileSync('test.html', `<table cellpadding=0 cellspacing=0>${gridLines(8,9, {regions:[{x:1,y:2,w:1,h:2,style:{RB:{borderBottom:'3px solid black'}}},[3,4,2,2]], style:{LT:{border:'1px solid red'}}})}</table>`, 'utf8')
+require('fs').writeFileSync('test.html', `<table cellpadding=0 cellspacing=0>${gridLines(8,9, {regions:[[1,4,1,2],{x:1,y:2,w:1,h:2,style:{RB1:{borderBottom:'3px solid black'}}},[3,4,2,2]], style:{LT:{border:'1px solid red'}}, getValue:(i,j)=>i+j})}</table>`, 'utf8')
 
 
