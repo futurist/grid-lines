@@ -57,7 +57,7 @@ function gridLines(lines, cols, opt){
           if(isArray(obj)){
             var [x,y,w,h] = obj
           }else{
-            var {x,y,w,h,style} = obj
+            var {x,y,w,h,style,keepBorder} = obj
           }
           let rh = y+h
           let rw = x+w
@@ -65,9 +65,11 @@ function gridLines(lines, cols, opt){
             let [H2, V2] = getParts(i,j,rh, rw, x, y)
             console.log(i,j,H2,V2)
             // corner case, i==0, lines==1, T will B!!
-            if(V2!='B') css.borderBottom = 0
-            if(H2!='R') css.borderRight=0
-            if(style) objutil.assign(css, style[H2+V2])
+            if(!keepBorder){
+              if(V2!='B') css.borderBottom = 0
+              if(H2!='R') css.borderRight=0
+            }
+            if(style) objutil.assign(css, style[H2+V2]||style.LT)
           }
         })
       }
@@ -84,6 +86,6 @@ function gridLines(lines, cols, opt){
   return ret.join(opt.newLine)
 }
 
-require('fs').writeFileSync('test.html', `<table cellpadding=0 cellspacing=0>${gridLines(8,9, {regions:[[1,4,1,2],{x:1,y:2,w:1,h:2,style:{RB1:{borderBottom:'3px solid black'}}},[3,4,2,2]], style:{LT:{border:'1px solid red'}}, getValue:(i,j)=>i+j})}</table>`, 'utf8')
+require('fs').writeFileSync('test.html', `<table cellpadding=0 cellspacing=0>${gridLines(8,9, {regions:[[1,4,1,2],{x:1,y:2,w:1,h:2,keepBorder:true,style:{LT:{background:'red'},RB1:{borderBottom:'3px solid black'}}},[3,4,2,2]], style:{LT:{border:'1px solid red'}}, getValue:(i,j)=>i+j})}</table>`, 'utf8')
 
 
